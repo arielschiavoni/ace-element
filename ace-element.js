@@ -40,9 +40,31 @@
 		},
 		initializeEditor: function () {
 			ace.config.set('basePath', this.resolvePath('src-noconflict/'));
+			ace.config.set("workerPath", "src-noconflict/");
+			this.editor.setOption('enableSnippets', true);
+			this.editor.setOption('enableBasicAutocompletion', true);
+			this.editor.setOption('enableLiveAutocompletion', true);
+			this.editor.setOption('jslint', {
+
+			});
+
+			var langTools = ace.require("ace/ext/language_tools");
+			var rhymeCompleter = {
+				getCompletions: function(editor, session, pos, prefix, callback) {
+					if (prefix.length === 0) {
+						callback(null, []);
+						return;
+					}
+					callback(null, [{word: 'vizcon', value: 'vizcon'}]);
+				}
+			};
+			langTools.addCompleter(rhymeCompleter);
+
+
 			//this.editor = ace.edit(document.createElement('div'));
 			//this.editor = ace.edit(this.$.editor);
-			this.editor.getSession().setMode("ace/mode/javascript");
+			var mode = this.editor.getSession().setMode("ace/mode/javascript");
+			debugger;
 			//this.editor.getSession().setMode("mode/javascript");
 			this.editor.setTheme("ace/theme/monokai");
 			//this.$.editor.appendChild(this.div);
