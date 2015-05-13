@@ -1,10 +1,77 @@
 (function (style) {
+	var snippetsList = {};
+	var autoCompleteList = {};
+	var optionsList = {};
+
 	Polymer('ace-element', {
 		mode: 'javascript',
 		theme: 'monokai',
 		readonly: false,
 		value: null,
 		wrap: false,
+
+		observe: {
+			'session.$worker.$worker' : 'updateWorker',
+			'snippets' : 'updateSnippets',
+			'autoComplete': 'autoComplete'
+		},
+		// Insert worker/JSLint options when the worker is ready
+		updateWorker: function() {
+			if (!this.session.$worker || !this.session.$worker.$worker) {
+				return;
+			}
+
+			this.workerReady = true;
+
+			if (this.jsHintOptions) {
+				this.setJSHintOptions();
+			}
+		},
+
+		setJSHintOptions: function (o) {
+			this.session.$worker.$worker.postMessage({command: 'changeOptions', args: [this.jsHintOptions]});
+		},
+
+		snippetsLoaded: function(ev) {
+			if (snippetsList[this.snippetsSrc]) {
+				return;
+			}
+
+			snippetsList[this.snippetsSrc] = true;
+
+			var snippetManager = ace.require("ace/snippets").snippetManager;
+			snippetManager.register(snippetManager.parseSnippetFile(ev.detail.response), 'javascript');
+		},
+
+		autoCompleteSrcLoaded: function(ev) {
+			if (autoCompleteList[this.autoCompleteSrc]) {
+				return;
+			}
+
+			autoCompleteList[this.autoCompleteSrc] = true;
+
+			var langTools = ace.require("ace/ext/language_tools");
+			var rhymeCompleter = {
+				getCompletions: function(editor, session, pos, prefix, callback) {
+					if (prefix.length === 0) {
+						callback(null, []);
+						return;
+					}
+					callback(null, [{word: 'vizcon', value: 'vizcon'}, {word: 'renderer.clip', value: 'vizcon'}]);
+				}
+			};
+
+			langTools.addCompleter(rhymeCompleter);
+		},
+
+		jsHintConfigSrcLoaded: function(ev) {
+			this.jsHintOptions = ev.detail.response;
+
+			if (this.workerReady) {
+				this.setJSHintOptions();
+			}
+		},
+
 		// allow styling from the outside world!
 		//applyAuthorStyles: true,
 		registerCallback: function (polymerElt) {
@@ -32,8 +99,6 @@
 			this.editor = ace.edit(div);
 			this.enteredView();
 			this.appendChild(div);
-
-			//this.$.editor.appendChild(div);
 		},
 		enteredView: function () {
 			this.initializeEditor();
@@ -44,34 +109,16 @@
 			this.editor.setOption('enableSnippets', true);
 			this.editor.setOption('enableBasicAutocompletion', true);
 			this.editor.setOption('enableLiveAutocompletion', true);
-			this.editor.setOption('jslint', {
 
-			});
+			this.session = this.editor.getSession();
 
-			var langTools = ace.require("ace/ext/language_tools");
-			var rhymeCompleter = {
-				getCompletions: function(editor, session, pos, prefix, callback) {
-					if (prefix.length === 0) {
-						callback(null, []);
-						return;
-					}
-					callback(null, [{word: 'vizcon', value: 'vizcon'}]);
-				}
-			};
-			langTools.addCompleter(rhymeCompleter);
-
-
-			//this.editor = ace.edit(document.createElement('div'));
-			//this.editor = ace.edit(this.$.editor);
-			var mode = this.editor.getSession().setMode("ace/mode/javascript");
-			debugger;
-			//this.editor.getSession().setMode("mode/javascript");
 			this.editor.setTheme("ace/theme/monokai");
-			//this.$.editor.appendChild(this.div);
+
 			this.editor.focus();
 			this.readonlyChanged();
 			this.wrapChanged();
 			this.tabSizeChanged();
+			this.modeChanged();
 			this.editor.on("blur", this.editorBlurAction.bind(this));
 			this.editor.on('change', this.editorChangeAction.bind(this));
 			this.value = this.textContent;
@@ -106,7 +153,7 @@
 			this.editorValue = this.value;
 			this.editor.clearSelection();
 			this.editor.resize();
-			//this.editor.focus();
+			this.editor.focus();
 		},
 		readonlyChanged: function () {
 			this.editor.setReadOnly(this.readonly);

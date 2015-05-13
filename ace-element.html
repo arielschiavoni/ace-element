@@ -7,13 +7,22 @@ Use of this source code is governed by a BSD-style
 license that can be found in the LICENSE file.
 -->
 <link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../core-ajax/core-ajax.html">
+<link rel="import" href="bower_components/core-ajax/core-ajax.html">
 <script src="src-noconflict/ace.js"></script>
 <script src="src-noconflict/ext-language_tools.js"></script>
+<script src="src-noconflict/snippets/snippets.js"></script>
 <script>
 
 </script>
-<polymer-element name="ace-element" attributes="theme mode value readonly wrap fontSize tabSize">
+<polymer-element name="ace-element" attributes="theme mode value readonly wrap fontSize tabSize snippetsSrc autoCompleteSrc jsHintConfigSrc">
+
     <template>
+        <core-ajax auto url="{{snippetsSrc}}" handleAs="text" on-core-response="{{snippetsLoaded}}"></core-ajax>
+        <core-ajax auto url="{{autoCompleteSrc}}" handleAs="json" on-core-response="{{autoCompleteSrcLoaded}}"></core-ajax>
+        <core-ajax auto url="{{jsHintConfigSrc}}" handleAs="json" on-core-response="{{jsHintConfigSrcLoaded}}"></core-ajax>
         <link rel="stylesheet" href="./ace-element.css">
         <style type="text/css" media="screen">
             #editor {
