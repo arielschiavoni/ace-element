@@ -4,6 +4,7 @@
 	var optionsList = {};
 
 	Polymer('ace-element', {
+		applyAuthorStyles: true,
 		mode: 'javascript',
 		theme: 'monokai',
 		readonly: false,
@@ -94,18 +95,28 @@
 		// this.editor is not set, we create a dummy editor. At editor
 		// initialization time, any pending changes are synch'd.
 		ready: function () {
-			var div = document.createElement('div');
+			var div = this.$.editor;//document.createElement('div');
 			div.style.width = '500px';
 			div.style.height = '500px';
 			this.editor = ace.edit(div);
 			this.enteredView();
-			this.appendChild(div);
+
+			//this.appendChild(div);
 		},
 		enteredView: function () {
 			this.initializeEditor();
 		},
 		initializeEditor: function () {
+			var self = this;
 			var editor = this.editor;
+			//this._whenMatches(document.head, '#ace_editor', 'applyTheme');
+			[].forEach.call(document.head.querySelectorAll('style'), function(style) {
+				if(style.textContent.indexOf('ace') !== -1) {
+					self.shadowRoot.appendChild(cloneStyle(style));
+				}
+
+			});
+			this.themeChanged();
 			ace.config.set('basePath', this.resolvePath('src-min-noconflict/'));
 			ace.config.set("workerPath", "src-min-noconflict/");
 			editor.setOption('enableSnippets', true);
@@ -153,6 +164,7 @@
 		},
 		themeChanged: function () {
 			this.editor.setTheme('ace/theme/' + this.theme);
+
 			this._whenMatches(document.head, '#ace-' + this.theme, 'applyTheme');
 		},
 		_whenMatches: function (node, selector, method) {
@@ -169,6 +181,8 @@
 		applyTheme: function (style) {
 			if (style) {
 				this.shadowRoot.appendChild(cloneStyle(style));
+			} else {
+
 			}
 		},
 		valueChanged: function () {
