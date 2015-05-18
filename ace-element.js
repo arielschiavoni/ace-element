@@ -47,7 +47,6 @@
 			if (autoCompleteList[this.autoCompleteSrc]) {
 				return;
 			}
-
 			var editor = this.editor;
 
 			autoCompleteList[this.autoCompleteSrc] = true;
@@ -59,7 +58,7 @@
 						callback(null, []);
 						return;
 					}
-					callback(null, [{word: 'vizcon', value: 'vizcon'}, {word: 'renderer.clip', value: 'vizcon'}]);
+					callback(null, ev.detail.response);
 				}
 			};
 
@@ -107,8 +106,8 @@
 		},
 		initializeEditor: function () {
 			var editor = this.editor;
-			ace.config.set('basePath', this.resolvePath('src-noconflict/'));
-			ace.config.set("workerPath", "src-noconflict/");
+			ace.config.set('basePath', this.resolvePath('src-min-noconflict/'));
+			ace.config.set("workerPath", "src-min-noconflict/");
 			editor.setOption('enableSnippets', true);
 			editor.setOption('enableBasicAutocompletion', true);
 			editor.setOption('enableLiveAutocompletion', true);
@@ -129,16 +128,18 @@
 			var usedKeybinding = 'sublime';
 
 			editor.commands.addCommand({
-				name: 'changeToVIMKeybindings',
-				bindKey: {win: 'Ctrl-Alt-X',  mac: 'Command-Alt-X', linux: 'Ctrl-Alt-X'},
+				name: 'changeToACEKeybindings',
+				bindKey: {win: 'Ctrl-Alt-A',  mac: 'Command-Alt-A', linux: 'Ctrl-Alt-A'},
 				exec: function(editor) {
-					if(usedKeybinding === 'sublime') {
-						editor.setKeyboardHandler("ace/keyboard/vim");
-						usedKeybinding = 'vim';
-					} else {
-						editor.setKeyboardHandler("ace/keyboard/sublime");
-						usedKeybinding = 'sublime';
-					}
+					editor.setKeyboardHandler("ace/keyboard/ace");
+				}
+			});
+
+			editor.commands.addCommand({
+				name: 'changeToVIMKeybindings',
+				bindKey: {win: 'Ctrl-Alt-V',  mac: 'Command-Alt-V', linux: 'Ctrl-Alt-V'},
+				exec: function(editor) {
+					editor.setKeyboardHandler("ace/keyboard/vim");
 				}
 			});
 
