@@ -48,6 +48,8 @@
 				return;
 			}
 
+			var editor = this.editor;
+
 			autoCompleteList[this.autoCompleteSrc] = true;
 
 			var langTools = ace.require("ace/ext/language_tools");
@@ -104,24 +106,43 @@
 			this.initializeEditor();
 		},
 		initializeEditor: function () {
+			var editor = this.editor;
 			ace.config.set('basePath', this.resolvePath('src-noconflict/'));
 			ace.config.set("workerPath", "src-noconflict/");
-			this.editor.setOption('enableSnippets', true);
-			this.editor.setOption('enableBasicAutocompletion', true);
-			this.editor.setOption('enableLiveAutocompletion', true);
+			editor.setOption('enableSnippets', true);
+			editor.setOption('enableBasicAutocompletion', true);
+			editor.setOption('enableLiveAutocompletion', true);
 
-			this.session = this.editor.getSession();
+			this.session = editor.getSession();
 
-			this.editor.setTheme("ace/theme/monokai");
+			editor.setTheme("ace/theme/monokai");
 
-			this.editor.focus();
+			editor.focus();
 			this.readonlyChanged();
 			this.wrapChanged();
 			this.tabSizeChanged();
 			this.modeChanged();
-			this.editor.on("blur", this.editorBlurAction.bind(this));
-			this.editor.on('change', this.editorChangeAction.bind(this));
+			editor.on("blur", this.editorBlurAction.bind(this));
+			editor.on('change', this.editorChangeAction.bind(this));
 			this.value = this.textContent;
+
+			var usedKeybinding = 'sublime';
+
+			editor.commands.addCommand({
+				name: 'changeToVIMKeybindings',
+				bindKey: {win: 'Ctrl-Alt-X',  mac: 'Command-Alt-X', linux: 'Ctrl-Alt-X'},
+				exec: function(editor) {
+					if(usedKeybinding === 'sublime') {
+						editor.setKeyboardHandler("ace/keyboard/vim");
+						usedKeybinding = 'vim';
+					} else {
+						editor.setKeyboardHandler("ace/keyboard/sublime");
+						usedKeybinding = 'sublime';
+					}
+				}
+			});
+
+
 		},
 		fontSizeChanged: function () {
 			this.$.editor.style.fontSize = this.fontSize;
