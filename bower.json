@@ -4,6 +4,6 @@
   "private": true,
   "dependencies": {
     "polymer": "~0.5.4",
-    "core-ajax": "Polymer/core-ajax#master~0.5.4"
+    "core-ajax": "Polymer/core-ajax#~0.5.4"
   }
 }
