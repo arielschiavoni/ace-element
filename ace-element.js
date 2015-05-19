@@ -98,8 +98,8 @@
 		// initialization time, any pending changes are synch'd.
 		ready: function () {
 			var div = this.$.editor;//document.createElement('div');
-			div.style.width = '500px';
-			div.style.height = '500px';
+			div.style.width = '100%';
+			div.style.height = '100%';
 			this.editor = ace.edit(div);
 			this.enteredView();
 
