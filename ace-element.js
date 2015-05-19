@@ -30,7 +30,9 @@
 		},
 
 		setJSHintOptions: function (o) {
-			this.session.$worker.$worker.postMessage({command: 'changeOptions', args: [this.jsHintOptions]});
+			if (this.mode === 'javascript') {
+				this.session.$worker.$worker.postMessage({command: 'changeOptions', args: [this.jsHintOptions]});
+			}
 		},
 
 		snippetsLoaded: function(ev) {
