@@ -118,7 +118,7 @@
 			});
 			this.themeChanged();
 			ace.config.set('basePath', this.resolvePath('src-min-noconflict/'));
-			ace.config.set("workerPath", "src-min-noconflict/");
+			ace.config.set("workerPath", this.resolvePath('src-min-noconflict/'));
 			editor.setOption('enableSnippets', true);
 			editor.setOption('enableBasicAutocompletion', true);
 			editor.setOption('enableLiveAutocompletion', true);
