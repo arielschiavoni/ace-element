@@ -2,6 +2,35 @@
 	var snippetsList = {};
 	var autoCompleteList = {};
 	var optionsList = {};
+	var aceRegister = [];
+	var observer = new MutationObserver(function(mutations) {
+		for (var i = 0, l = mutations.length; i < l; i++) {
+			var nodes = mutations[i].addedNodes;
+			for (var r = 0, nl = nodes.length; r < nl; r++) {
+				var node = nodes[r];
+
+				if (node.tagName = 'STYLE') {
+					if(node.textContent.indexOf('ace') !== -1) {
+						aceRegister.forEach(function(element) {
+							element.shadowRoot.appendChild(cloneStyle(node));
+						});
+					}
+				}
+			}
+		}
+
+	});
+	observer.observe(document.head, {childList: true});
+
+	window.setInterval(function() {
+		aceRegister = aceRegister.filter(function(element) {
+			while(element.parentNode) {
+				element = element.parentNode;
+			}
+
+			return element === document;
+		});
+	}, 10000);
 
 	Polymer('ace-element', {
 		applyAuthorStyles: true,
@@ -16,6 +45,7 @@
 			'snippets' : 'updateSnippets',
 			'autoComplete': 'autoComplete'
 		},
+
 		// Insert worker/JSLint options when the worker is ready
 		updateWorker: function() {
 			if (!this.session.$worker || !this.session.$worker.$worker) {
@@ -97,6 +127,7 @@
 		// this.editor is not set, we create a dummy editor. At editor
 		// initialization time, any pending changes are synch'd.
 		ready: function () {
+			aceRegister.push(this);
 			var div = this.$.editor;//document.createElement('div');
 			div.style.width = '100%';
 			div.style.height = '100%';
@@ -116,8 +147,10 @@
 				if(style.textContent.indexOf('ace') !== -1) {
 					self.shadowRoot.appendChild(cloneStyle(style));
 				}
-
 			});
+
+			this.head = document.head;
+
 			this.themeChanged();
 			ace.config.set('basePath', this.resolvePath('src-min-noconflict/'));
 			ace.config.set("workerPath", this.resolvePath('src-min-noconflict/'));
