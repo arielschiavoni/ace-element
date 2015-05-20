@@ -177,7 +177,7 @@
 				name: 'changeToACEKeybindings',
 				bindKey: {win: 'Ctrl-Alt-A',  mac: 'Command-Alt-A', linux: 'Ctrl-Alt-A'},
 				exec: function(editor) {
-					self.$.lastUpdate.innerText = 'using ace keybindings. (default)';
+					self.$.log.innerText = 'using ace keybindings. (default)';
 					editor.setKeyboardHandler("ace/keyboard/ace");
 				}
 			});
@@ -186,7 +186,7 @@
 				name: 'changeToVIMKeybindings',
 				bindKey: {win: 'Ctrl-Alt-V',  mac: 'Command-Alt-V', linux: 'Ctrl-Alt-V'},
 				exec: function(editor) {
-					self.$.lastUpdate.innerText = 'using vim keybindings.';
+					self.$.log.innerText = 'using vim keybindings.';
 					editor.setKeyboardHandler("ace/keyboard/vim");
 				}
 			});
@@ -273,7 +273,7 @@
 		editorBlurAction: function (event) {
 			if (this._value !== null && this._value != this.editorValue) {
 				this.fire('editor-change', {value: this.editorValue, oldValue: this._value});
-				this.$.lastUpdate.innerText = 'last saved: ' + new Date().toLocaleDateString(navigator.languages[0]) + ' ' + new Date().toLocaleTimeString(navigator.languages[0]);
+				this.$.log.innerText = 'last saved: ' + new Date().toLocaleDateString(navigator.languages[0]) + ' ' + new Date().toLocaleTimeString(navigator.languages[0]);
 			}
 			this._value = this.editorValue;
 		},
