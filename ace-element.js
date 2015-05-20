@@ -177,6 +177,7 @@
 				name: 'changeToACEKeybindings',
 				bindKey: {win: 'Ctrl-Alt-A',  mac: 'Command-Alt-A', linux: 'Ctrl-Alt-A'},
 				exec: function(editor) {
+					self.$.lastUpdate.innerText = 'using ace keybindings. (default)';
 					editor.setKeyboardHandler("ace/keyboard/ace");
 				}
 			});
@@ -185,6 +186,7 @@
 				name: 'changeToVIMKeybindings',
 				bindKey: {win: 'Ctrl-Alt-V',  mac: 'Command-Alt-V', linux: 'Ctrl-Alt-V'},
 				exec: function(editor) {
+					self.$.lastUpdate.innerText = 'using vim keybindings.';
 					editor.setKeyboardHandler("ace/keyboard/vim");
 				}
 			});
