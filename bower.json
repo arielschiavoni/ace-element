@@ -7,7 +7,7 @@
     "core-ajax": "Polymer/core-ajax#~0.5.4",
     "core-iconset": "Polymer/core-iconset#master",
     "core-icons": "Polymer/core-icons#master",
-    "core-icons": "Polymer/core-icon#master",
+    "core-icon": "Polymer/core-icon#master",
     "core-iconset": "Polymer/core-iconset#master"
   }
 }
