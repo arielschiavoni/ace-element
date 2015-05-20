@@ -271,7 +271,7 @@
 		editorBlurAction: function (event) {
 			if (this._value !== null && this._value != this.editorValue) {
 				this.fire('editor-change', {value: this.editorValue, oldValue: this._value});
-				this.$.lastUpdate.innerText = 'lastUpdate: ' + new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds();
+				this.$.lastUpdate.innerText = 'last saved: ' + new Date().toLocaleDateString(navigator.languages[2]) + ' ' + new Date().toLocaleTimeString(navigator.languages[2]);
 			}
 			this._value = this.editorValue;
 		},
