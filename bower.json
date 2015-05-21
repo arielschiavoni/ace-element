@@ -4,10 +4,10 @@
   "private": true,
   "dependencies": {
     "polymer": "~0.5.4",
-    "core-ajax": "Polymer/core-ajax#~0.5.4",
-    "core-iconset": "Polymer/core-iconset#master",
-    "core-icons": "Polymer/core-icons#master",
-    "core-icon": "Polymer/core-icon#master",
-    "core-iconset": "Polymer/core-iconset#master"
+    "core-ajax": "Polymer/core-ajax#^0.5",
+    "core-iconset": "Polymer/core-iconset#^0.5",
+    "core-icons": "Polymer/core-icons#^0.5",
+    "core-icon": "Polymer/core-icon#^0.5",
+    "core-iconset": "Polymer/core-iconset#^0.5"
   }
 }
