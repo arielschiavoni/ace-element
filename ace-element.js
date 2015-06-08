@@ -9,7 +9,7 @@
 			for (var r = 0, nl = nodes.length; r < nl; r++) {
 				var node = nodes[r];
 
-				if (node.tagName = 'STYLE') {
+				if (node.tagName === 'STYLE') {
 					if(node.textContent.indexOf('ace') !== -1) {
 						aceRegister.forEach(function(element) {
 							element.shadowRoot.appendChild(cloneStyle(node));
@@ -24,8 +24,8 @@
 
 	window.setInterval(function() {
 		aceRegister = aceRegister.filter(function(element) {
-			while(element.parentNode) {
-				element = element.parentNode;
+			while(element.parentNode || element.host) {
+				element = element.parentNode || element.host;
 			}
 
 			return element === document;
