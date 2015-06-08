@@ -2,3 +2,7 @@ html /deep/ core-icon {
     width: 20px;
     height: 20px;
 }
+
+html /deep/ input {
+    color: #222222;
+}

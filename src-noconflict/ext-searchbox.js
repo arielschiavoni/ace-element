@@ -155,7 +155,7 @@ dom.importCssString(searchboxCss, "ace_searchbox");
 var html = '<div class="ace_search right">\
     <button type="button" action="hide" class="ace_searchbtn_close"></button>\
     <div class="ace_search_form">\
-        <input class="ace_search_field" placeholder="Search for" spellcheck="false"></input>\
+        <input id="ace_search" class="ace_search_field" placeholder="Search for" spellcheck="false"></input>\
         <button type="button" action="findNext" class="ace_searchbtn next"></button>\
         <button type="button" action="findPrev" class="ace_searchbtn prev"></button>\
         <button type="button" action="findAll" class="ace_searchbtn" title="Alt-Enter">All</button>\
