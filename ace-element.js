@@ -36,14 +36,23 @@
 		is: 'ace-element',
 
 		properties: {
-			theme: String,
+			theme: {
+				type: String,
+				value: 'monokai'
+			},
 			mode: {
 				type: String,
-				notify: true
+				notify: true,
 			},
 			value: String,
-			readonly: Boolean,
-			wrap: Boolean,
+			readonly: {
+				type: Boolean,
+				value: false
+			},
+			wrap: {
+				type: Boolean,
+				value: false
+			},
 			fontSize: Number,
 			tabSize: Number,
 			snippetsSrc: {
@@ -57,15 +66,9 @@
 			jsHintConfigSrc: {
 				type: String,
 				notify: true
-			}
+			},
+			value: String
 		},
-
-		applyAuthorStyles: true,
-		mode: 'javascript',
-		theme: 'monokai',
-		readonly: false,
-		value: null,
-		wrap: false,
 
 		// Insert worker/JSLint options when the worker is ready
 		updateWorker: function() {
@@ -146,8 +149,6 @@
 					window.clearInterval(intervalIndex);
 				}
 			}, 300);
-
-			//this.appendChild(div);
 		},
 		enteredView: function () {
 			this.initializeEditor();
@@ -155,10 +156,16 @@
 		initializeEditor: function () {
 			var self = this;
 			var editor = this.editor;
-			//this._whenMatches(document.head, '#ace_editor', 'applyTheme');
-			[].forEach.call(document.head.querySelectorAll('style'), function(style) {
-				if(style.textContent.indexOf('ace') !== -1) {
-					self.appendChild(cloneStyle(style));
+
+			editor.commands.addCommand({
+				name: 'saveFile',
+				bindKey: {
+					win: 'Ctrl-S',
+					mac: 'Command-S',
+					sender: 'editor|cli'
+				},
+				exec: function() {
+					self.contentEdited();
 				}
 			});
 
@@ -284,13 +291,17 @@
 			this.editor.getSession().selection.moveCursorLineStart();
 			this.editor.clearSelection();
 		},
-		editorBlurAction: function (event) {
+		editorBlurAction: function () {
+			this.contentEdited();
+		},
+		contentEdited: function() {
 			if (this._value !== null && this._value != this.editorValue) {
 				this.fire('editor-change', {value: this.editorValue, oldValue: this._value});
 				this.$.log.innerText = 'last saved: ' + new Date().toLocaleDateString(navigator.languages[0]) + ' ' + new Date().toLocaleTimeString(navigator.languages[0]);
 			}
 			this._value = this.editorValue;
 		},
+
 		editorChangeAction: function () {
 			this.fire('editor-input', {value: this.editorValue, oldValue: this._value});
 		},
