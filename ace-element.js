@@ -46,9 +46,18 @@
 			wrap: Boolean,
 			fontSize: Number,
 			tabSize: Number,
-			snippetsSrc: String,
-			autoCompleteSrc: String,
-			jsHintConfigSrc: String
+			snippetsSrc: {
+				type: String,
+				notify: true
+			},
+			autoCompleteSrc: {
+				type: String,
+				notify: true
+			},
+			jsHintConfigSrc: {
+				type: String,
+				notify: true
+			}
 		},
 
 		applyAuthorStyles: true,
@@ -57,12 +66,6 @@
 		readonly: false,
 		value: null,
 		wrap: false,
-
-		observe: {
-			'session.$worker.$worker' : 'updateWorker',
-			'snippets' : 'updateSnippets',
-			'autoComplete': 'autoComplete'
-		},
 
 		// Insert worker/JSLint options when the worker is ready
 		updateWorker: function() {
@@ -75,6 +78,7 @@
 			if (this.jsHintOptions) {
 				this.setJSHintOptions();
 			}
+			return true;
 		},
 
 		setJSHintOptions: function (o) {
@@ -84,7 +88,7 @@
 		},
 
 		snippetsLoaded: function(ev) {
-			if (snippetsList[this.snippetsSrc]) {
+			if (!ev.detail.response || snippetsList[this.snippetsSrc]) {
 				return;
 			}
 
@@ -95,7 +99,7 @@
 		},
 
 		autoCompleteSrcLoaded: function(ev) {
-			if (autoCompleteList[this.autoCompleteSrc]) {
+			if (!ev.detail.responseText || autoCompleteList[this.autoCompleteSrc]) {
 				return;
 			}
 			var editor = this.editor;
@@ -109,7 +113,7 @@
 						callback(null, []);
 						return;
 					}
-					callback(null, ev.detail.response);
+					callback(null, ev.detail.response || []);
 				}
 			};
 
@@ -124,37 +128,24 @@
 			}
 		},
 
-		// allow styling from the outside world!
-		//applyAuthorStyles: true,
-		/*registerCallback: function (polymerElt) {
-			if (!polymerElt) {
-				return;
-			}
-
-			var selectors = [
-				'#ace_editor',
-				'#ace-tm'
-			];
-			var content = polymerElt.templateContent();
-			for (var i = 0, l = selectors.length, s, n; (i < l) && (s = selectors[i]); i++) {
-				n = document.querySelector(s);
-				if (n) {
-					content.appendChild(cloneStyle(n));
-				}
-			}
-		},*/
 		// TODO(sorvell): to work in IE reliably, can only be
 		// created in enteredView. However, api that wants to access this.editor
 		// may be used before that. Instead of making each function bail if
 		// this.editor is not set, we create a dummy editor. At editor
 		// initialization time, any pending changes are synch'd.
 		ready: function () {
-			aceRegister.push(this);
+			//aceRegister.push(this);
+			var self = this;
 			var div = this.$.editor;//document.createElement('div');
 			div.style.width = '100%';
 			div.style.height = '100%';
 			this.editor = ace.edit(div);
 			this.enteredView();
+			var intervalIndex = window.setInterval(function() {
+				if (self.updateWorker()) {
+					window.clearInterval(intervalIndex);
+				}
+			}, 300);
 
 			//this.appendChild(div);
 		},

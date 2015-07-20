@@ -39,9 +39,9 @@ license that can be found in the LICENSE file.
         }
     </style>
     <template>
-        <iron-ajax auto url="{{snippetsSrc}}" handleAs="text" on-core-response="snippetsLoaded"></iron-ajax>
-        <iron-ajax auto url="{{autoCompleteSrc}}" handleAs="json" on-iron-response="autoCompleteSrcLoaded"></iron-ajax>
-        <iron-ajax auto url="{{jsHintConfigSrc}}" handleAs="json" on-iron-response="jsHintConfigSrcLoaded"></iron-ajax>
+        <iron-ajax auto url="{{snippetsSrc}}" handle-as="text" on-response="snippetsLoaded"></iron-ajax>
+        <iron-ajax auto url="{{autoCompleteSrc}}" handle-as="json" on-response="autoCompleteSrcLoaded"></iron-ajax>
+        <iron-ajax auto url="{{jsHintConfigSrc}}" handle-as="json" on-response="jsHintConfigSrcLoaded"></iron-ajax>
 
         <div style="height: 100%" vertical layout justified>
             <div id="editor"></div>
