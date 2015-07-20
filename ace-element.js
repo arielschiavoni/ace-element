@@ -12,7 +12,7 @@
 				if (node.tagName === 'STYLE') {
 					if(node.textContent.indexOf('ace') !== -1) {
 						aceRegister.forEach(function(element) {
-							element.shadowRoot.appendChild(cloneStyle(node));
+							//element.appendChild(cloneStyle(node));
 						});
 					}
 				}
@@ -32,7 +32,25 @@
 		});
 	}, 10000);
 
-	Polymer('ace-element', {
+	var aceElement = {
+		is: 'ace-element',
+
+		properties: {
+			theme: String,
+			mode: {
+				type: String,
+				notify: true
+			},
+			value: String,
+			readonly: Boolean,
+			wrap: Boolean,
+			fontSize: Number,
+			tabSize: Number,
+			snippetsSrc: String,
+			autoCompleteSrc: String,
+			jsHintConfigSrc: String
+		},
+
 		applyAuthorStyles: true,
 		mode: 'javascript',
 		theme: 'monokai',
@@ -108,7 +126,11 @@
 
 		// allow styling from the outside world!
 		//applyAuthorStyles: true,
-		registerCallback: function (polymerElt) {
+		/*registerCallback: function (polymerElt) {
+			if (!polymerElt) {
+				return;
+			}
+
 			var selectors = [
 				'#ace_editor',
 				'#ace-tm'
@@ -120,7 +142,7 @@
 					content.appendChild(cloneStyle(n));
 				}
 			}
-		},
+		},*/
 		// TODO(sorvell): to work in IE reliably, can only be
 		// created in enteredView. However, api that wants to access this.editor
 		// may be used before that. Instead of making each function bail if
@@ -145,15 +167,15 @@
 			//this._whenMatches(document.head, '#ace_editor', 'applyTheme');
 			[].forEach.call(document.head.querySelectorAll('style'), function(style) {
 				if(style.textContent.indexOf('ace') !== -1) {
-					self.shadowRoot.appendChild(cloneStyle(style));
+					self.appendChild(cloneStyle(style));
 				}
 			});
 
 			this.head = document.head;
 
 			this.themeChanged();
-			ace.config.set('basePath', this.resolvePath('src-min-noconflict/'));
-			ace.config.set("workerPath", this.resolvePath('src-min-noconflict/'));
+			ace.config.set('basePath', this.resolveUrl('src-min-noconflict/'));
+			ace.config.set("workerPath", this.resolveUrl('src-min-noconflict/'));
 			editor.setOption('enableSnippets', true);
 			editor.setOption('enableBasicAutocompletion', true);
 			editor.setOption('enableLiveAutocompletion', true);
@@ -201,6 +223,7 @@
 		},
 		themeChanged: function () {
 			this.editor.setTheme('ace/theme/' + this.theme);
+			return;
 
 			this._whenMatches(document.head, '#ace-' + this.theme, 'applyTheme');
 		},
@@ -217,7 +240,7 @@
 		},
 		applyTheme: function (style) {
 			if (style) {
-				this.shadowRoot.appendChild(cloneStyle(style));
+				this.appendChild(cloneStyle(style));
 			} else {
 
 			}
@@ -290,7 +313,8 @@
 		focus: function () {
 			this.editor.focus();
 		}
-	});
+	};
+	Polymer(aceElement);
 
 	// IE safe style clone
 	function cloneStyle(style) {

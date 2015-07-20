@@ -7,51 +7,42 @@ Use of this source code is governed by a BSD-style
 license that can be found in the LICENSE file.
 -->
 
-<link rel="import" href="bower_components/core-icons/core-icons.html">
-<link rel="import" href="../core-icons/core-icons.html">
-
-<link rel="import" href="bower_components/core-icon/core-icon.html">
-<link rel="import" href="../core-icon/core-icon.html">
-
-<link rel="import" href="bower_components/core-iconset/core-iconset.html">
-<link rel="import" href="../core-iconset/core-iconset.html">
-
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="../polymer/polymer.html">
 
-<link rel="import" href="../core-ajax/core-ajax.html">
-<link rel="import" href="bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
 <script src="src-min-noconflict/ace.js"></script>
 <script src="src-min-noconflict/ext-language_tools.js"></script>
 <script src="src-min-noconflict/snippets/snippets.js"></script>
 <script>
 
 </script>
-<polymer-element name="ace-element" attributes="theme mode value readonly wrap fontSize tabSize snippetsSrc autoCompleteSrc jsHintConfigSrc">
-
+<dom-module id="ace-element">
+    <link rel="stylesheet" href="./ace-element.css">
+    <style type="text/css" media="screen">
+        #editor {
+            width: 500px;
+            height: 500px;
+        }
+        :host {
+            display: block;
+        }
+        #log {
+            width: 100%;
+            padding: 0 0 0 4px;
+            line-height: 24px;
+            color: #CFD8DC;
+        }
+        #help {
+            padding-right: 6px;
+        }
+    </style>
     <template>
-        <core-ajax auto url="{{snippetsSrc}}" handleAs="text" on-core-response="{{snippetsLoaded}}"></core-ajax>
-        <core-ajax auto url="{{autoCompleteSrc}}" handleAs="json" on-core-response="{{autoCompleteSrcLoaded}}"></core-ajax>
-        <core-ajax auto url="{{jsHintConfigSrc}}" handleAs="json" on-core-response="{{jsHintConfigSrcLoaded}}"></core-ajax>
-        <link rel="stylesheet" href="./ace-element.css">
-        <style type="text/css" media="screen">
-            #editor {
-                width: 500px;
-                height: 500px;
-            }
-            :host {
-                display: block;
-            }
-            #log {
-                width: 100%;
-                padding: 0 0 0 4px;
-                line-height: 24px;
-                color: #CFD8DC;
-            }
-            #help {
-                padding-right: 6px;
-            }
-        </style>
+        <iron-ajax auto url="{{snippetsSrc}}" handleAs="text" on-core-response="snippetsLoaded"></iron-ajax>
+        <iron-ajax auto url="{{autoCompleteSrc}}" handleAs="json" on-iron-response="autoCompleteSrcLoaded"></iron-ajax>
+        <iron-ajax auto url="{{jsHintConfigSrc}}" handleAs="json" on-iron-response="jsHintConfigSrcLoaded"></iron-ajax>
+
         <div style="height: 100%" vertical layout justified>
             <div id="editor"></div>
             <div style="line-height: 24px; color: #CFD8DC; background: #2F3129;" horizontal layout>
@@ -68,4 +59,4 @@ license that can be found in the LICENSE file.
 
     <script src="./ace-element.js"></script>
 
-</polymer-element>
+</dom-module>
