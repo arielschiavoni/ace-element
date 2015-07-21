@@ -12,7 +12,7 @@
 				if (node.tagName === 'STYLE') {
 					if(node.textContent.indexOf('ace') !== -1) {
 						aceRegister.forEach(function(element) {
-							//element.appendChild(cloneStyle(node));
+							element.appendChild(cloneStyle(node));
 						});
 					}
 				}
@@ -137,7 +137,7 @@
 		// this.editor is not set, we create a dummy editor. At editor
 		// initialization time, any pending changes are synch'd.
 		ready: function () {
-			//aceRegister.push(this);
+			aceRegister.push(this);
 			var self = this;
 			var div = this.$.editor;//document.createElement('div');
 			div.style.width = '100%';
