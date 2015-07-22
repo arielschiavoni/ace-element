@@ -9,15 +9,13 @@ license that can be found in the LICENSE file.
 
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
 <script src="src-min-noconflict/ace.js"></script>
 <script src="src-min-noconflict/ext-language_tools.js"></script>
 <script src="src-min-noconflict/snippets/snippets.js"></script>
-<script>
-
-</script>
 <dom-module id="ace-element">
     <link rel="stylesheet" href="./ace-element.css">
     <style type="text/css" media="screen">
@@ -37,15 +35,22 @@ license that can be found in the LICENSE file.
         #help {
             padding-right: 6px;
         }
+        [horizontal-layout] {
+        @apply(--layout-horizontal);
+        }
+
+        [vertical-layout] {
+        @apply(--layout-vertical);
+        }
     </style>
     <template>
         <iron-ajax auto url="{{snippetsSrc}}" handle-as="text" on-response="snippetsLoaded"></iron-ajax>
         <iron-ajax auto url="{{autoCompleteSrc}}" handle-as="json" on-response="autoCompleteSrcLoaded"></iron-ajax>
         <iron-ajax auto url="{{jsHintConfigSrc}}" handle-as="json" on-response="jsHintConfigSrcLoaded"></iron-ajax>
 
-        <div style="height: 100%" vertical layout justified>
+        <div style="height: 100%" vertical-layout>
             <div id="editor"></div>
-            <div style="line-height: 24px; color: #CFD8DC; background: #2F3129;" horizontal layout>
+            <div style="line-height: 24px; color: #CFD8DC; background: #2F3129;" horizontal-layout>
                 <div id="log"></div>
                 <div id="help">
                     <a style="color: #CFD8DC;" href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank">
