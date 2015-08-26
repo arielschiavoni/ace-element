@@ -1,40 +1,7 @@
 (function (style) {
-	var snippetsList = {};
-	var autoCompleteList = {};
-	var optionsList = {};
-	var aceRegister = [];
-	/*var observer = new MutationObserver(function(mutations) {
-		for (var i = 0, l = mutations.length; i < l; i++) {
-			var nodes = mutations[i].addedNodes;
-			for (var r = 0, nl = nodes.length; r < nl; r++) {
-				var node = nodes[r];
-
-				if (node.tagName === 'STYLE') {
-					if(node.textContent.indexOf('ace') !== -1) {
-						aceRegister.forEach(function(element) {
-							//element.appendChild(cloneStyle(node));
-						});
-					}
-				}
-			}
-		}
-
-	});
-	observer.observe(document.head, {childList: true});*/
-
-	window.setInterval(function() {
-		aceRegister = aceRegister.filter(function(element) {
-			while(element.parentNode || element.host) {
-				element = element.parentNode || element.host;
-			}
-
-			return element === document;
-		});
-	}, 10000);
-
 	var aceElement = {
 		is: 'ace-element',
-
+		
 		properties: {
 			theme: {
 				type: String,
@@ -55,19 +22,20 @@
 			},
 			fontSize: Number,
 			tabSize: Number,
-			snippetsSrc: {
+			snippets: {
 				type: String,
 				notify: true
 			},
-			autoCompleteSrc: {
-				type: String,
+			autoComplete: {
+				type: Object,
 				notify: true
 			},
-			jsHintConfigSrc: {
-				type: String,
+			jsHintOptions: {
+				type: Object,
 				notify: true
 			},
-			value: String
+			value: String,
+			workerPath: String
 		},
 
 		// Insert worker/JSLint options when the worker is ready
@@ -90,56 +58,14 @@
 			}
 		},
 
-		snippetsLoaded: function(ev) {
-			if (!ev.detail.response || snippetsList[this.snippetsSrc]) {
-				return;
-			}
-
-			snippetsList[this.snippetsSrc] = true;
-
-			var snippetManager = ace.require("ace/snippets").snippetManager;
-			snippetManager.register(snippetManager.parseSnippetFile(ev.detail.response), 'javascript');
-		},
-
-		autoCompleteSrcLoaded: function(ev) {
-			if (!ev.detail.responseText || autoCompleteList[this.autoCompleteSrc]) {
-				return;
-			}
-			var editor = this.editor;
-
-			autoCompleteList[this.autoCompleteSrc] = true;
-
-			var langTools = ace.require("ace/ext/language_tools");
-			var rhymeCompleter = {
-				getCompletions: function(editor, session, pos, prefix, callback) {
-					if (prefix.length === 0) {
-						callback(null, []);
-						return;
-					}
-					callback(null, ev.detail.response || []);
-				}
-			};
-
-			langTools.addCompleter(rhymeCompleter);
-		},
-
-		jsHintConfigSrcLoaded: function(ev) {
-			this.jsHintOptions = ev.detail.response;
-
-			if (this.workerReady) {
-				this.setJSHintOptions();
-			}
-		},
-
 		// TODO(sorvell): to work in IE reliably, can only be
 		// created in enteredView. However, api that wants to access this.editor
 		// may be used before that. Instead of making each function bail if
 		// this.editor is not set, we create a dummy editor. At editor
 		// initialization time, any pending changes are synch'd.
 		ready: function () {
-			//aceRegister.push(this);
 			var self = this;
-			var div = this.$.editor;//document.createElement('div');
+			var div = this.$.editor;
 			div.style.width = '100%';
 			div.style.height = '100%';
 			this.editor = ace.edit(div);
@@ -173,7 +99,7 @@
 
 			this.themeChanged();
 			ace.config.set('basePath', this.resolveUrl('src-min-noconflict/'));
-			ace.config.set("workerPath", this.resolveUrl('src-min-noconflict/'));
+			ace.config.set("workerPath", this.workerPath || this.resolveUrl('src-min-noconflict/'));
 			editor.setOption('enableSnippets', true);
 			editor.setOption('enableBasicAutocompletion', true);
 			editor.setOption('enableLiveAutocompletion', true);
@@ -211,7 +137,28 @@
 				}
 			});
 
+			// jshint
+			if (this.workerReady) {
+				this.setJSHintOptions();
+			}
 
+			// snippets
+			var snippetManager = ace.require("ace/snippets").snippetManager;
+			snippetManager.register(snippetManager.parseSnippetFile(this.snippets), 'javascript');
+
+			// autoComplete
+			var langTools = ace.require("ace/ext/language_tools");
+			var self = this;
+			var rhymeCompleter = {
+				getCompletions: function(editor, session, pos, prefix, callback) {
+					if (prefix.length === 0) {
+						callback(null, []);
+						return;
+					}
+					callback(null, self.autoComplete || []);
+				}
+			};
+			langTools.addCompleter(rhymeCompleter);
 		},
 		fontSizeChanged: function () {
 			this.$.editor.style.fontSize = this.fontSize;
