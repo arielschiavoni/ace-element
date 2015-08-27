@@ -1,7 +1,7 @@
 (function (style) {
 	var aceElement = {
 		is: 'ace-element',
-		
+
 		properties: {
 			theme: {
 				type: String,
@@ -144,7 +144,7 @@
 
 			// snippets
 			var snippetManager = ace.require("ace/snippets").snippetManager;
-			snippetManager.register(snippetManager.parseSnippetFile(this.snippets), 'javascript');
+			snippetManager.register(this.snippets, 'javascript');
 
 			// autoComplete
 			var langTools = ace.require("ace/ext/language_tools");
